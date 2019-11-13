@@ -15,16 +15,24 @@ import (
     https://github.com/Marco3jp/capture-shoe-boxes [WIP]
 */
 
+type CaptureSize struct {
+	height uint32
+	width  uint32
+}
+
 type Config struct {
-	captureRoot  string // Set directory to save captured image.
-	captureSize  string // {width}x{height} [notice: "x" character for splitting]
-	cameraDevice string // like /dev/videoN, N is "0", "1"...etc(it is auto detected by udev.).
-	timeOut      uint32 // this unit is unknown...it is mentioned next code. https://github.com/blackjack/webcam/blob/master/v4l2.go#L445)
+	captureRoot  string      // Set directory to save captured image.
+	captureSize  CaptureSize // {width}x{height} [notice: "x" character for splitting]
+	cameraDevice string      // like /dev/videoN, N is "0", "1"...etc(it is auto detected by udev.).
+	timeOut      uint32      // this unit is unknown...it is mentioned next code. https://github.com/blackjack/webcam/blob/master/v4l2.go#L445)
 }
 
 var config = Config{
-	captureRoot:  "/tmp/",
-	captureSize:  "1920x1080",
+	captureRoot: "/tmp/",
+	captureSize: CaptureSize{
+		height: 720,
+		width:  1280,
+	},
 	cameraDevice: "/dev/video0",
 	timeOut:      1000000,
 }
@@ -98,7 +106,7 @@ func setupCamera() {
 		panic("cannnot use format")
 	}
 
-	_, _, _, err := cam.SetImageFormat(format, 1280, 720)
+	_, _, _, err := cam.SetImageFormat(format, config.captureSize.width, config.captureSize.height)
 
 	if err != nil {
 		panic(err)
