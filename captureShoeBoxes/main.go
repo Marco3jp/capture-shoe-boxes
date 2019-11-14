@@ -57,6 +57,7 @@ func main() {
 	frame := takeCapture(cam, config)
 	saveFrame(frame, fileName)
 
+	// TODO: 参照の問題なのかFrameを保存する前にStopするとPanicで落ちるので暫定的にここで止めている
 	err = cam.StopStreaming()
 
 	if err != nil {
@@ -75,6 +76,8 @@ func connectDb() *sql.DB {
 	return db
 }
 
+// 自動補正による画像の差異を減らすために、カメラのホワイトバランスなどをマニュアルでセット
+// また、画像のフォーマットにMotion-JPEGを指定
 func setupCamera() {
 	controlMap := cam.GetControls()
 	for f, s := range controlMap {
