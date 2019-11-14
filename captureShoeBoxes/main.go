@@ -12,7 +12,7 @@ import (
 /*
 	Copyright (c) 2019 Marco
 	MIT License
-    https://github.com/Marco3jp/capture-shoe-boxes [WIP]
+    https://github.com/Marco3jp/is-exist-researcher
 */
 
 type CaptureSize struct {
