@@ -46,7 +46,7 @@ var cam, err = webcam.Open(config.cameraDevice)
 	Use Linux, or future Linux like OS.
 */
 func main() {
-	// db := connectDb()
+	db := connectDb()
 	if err != nil {
 		panic(err)
 	}
@@ -66,11 +66,12 @@ func main() {
 		panic(err.Error())
 	}
 
-	// db.Prepare("INSERT INTO capture(fileName, createdAt, updatedAt) VALUES(?,?,?)")
+	insertDb(db, fileName)
 }
 
 func connectDb() *sql.DB {
-	db, err := sql.Open("mysql", "test:passwd@/example")
+	dataSourceName := "capture_shoe_boxes:" + os.Getenv("CAPTURE_SHOE_BOX_SQL_PASSWORD") + "@/is_exist_researcher"
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
