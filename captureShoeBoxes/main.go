@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/blackjack/webcam"
+	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"strconv"
 	"time"
@@ -74,6 +75,20 @@ func connectDb() *sql.DB {
 	}
 	defer db.Close()
 	return db
+}
+
+func insertDb(db *sql.DB, fileName string) (result sql.Result) {
+	ins, err := db.Prepare("INSERT INTO capture(file_name) VALUES(?)")
+	if err != nil {
+		panic(err)
+	}
+
+	result, err = ins.Exec(fileName)
+	if err != nil {
+		panic(err)
+	}
+
+	return result
 }
 
 // 自動補正による画像の差異を減らすために、カメラのホワイトバランスなどをマニュアルでセット
