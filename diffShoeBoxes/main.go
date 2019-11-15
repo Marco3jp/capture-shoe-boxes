@@ -8,6 +8,8 @@ import (
 	"image/color"
 	"image/jpeg"
 	"os"
+	"strconv"
+	"time"
 )
 
 type Config struct {
@@ -16,22 +18,47 @@ type Config struct {
 	metricType      imagick.MetricType
 }
 
-type diffImageResult struct {
-	difference float64
-}
-
 var config = Config{
 	voidShoeBoxPath: "./test/void.jpg",
 	threshold:       100,
-	metricType:      imagick.METRIC_MEAN_ABSOLUTE_ERROR,
+	metricType:      imagick.METRIC_FUZZ_ERROR,
+}
+
+type DiffImageResult struct {
+	difference float64
+}
+
+// for debug //
+type DebugState struct {
+	debug       bool
+	debugConfig DebugStruct
+}
+
+type DebugStruct struct {
+	oneImagePath string
+	twoImagePath string
+}
+
+var debugState = DebugState{
+	debug: false,
+	debugConfig: DebugStruct{
+		oneImagePath: "/tmp/1573657900.jpg",
+		twoImagePath: "/tmp/1573657906.jpg",
+	},
 }
 
 func main() {
 	// db, err := connectDb()
 	// latestImagePath := getLatestImagePath(db)
 	latestImagePath := "./test/exist_1.jpg"
-	// latestImage := getImage(latestImagePath)
-	// grayImage := convertToGrayscale(latestImage)
+
+	if len(os.Args) >= 2 && os.Args[1] == "debug" {
+		fmt.Println("Debug mode")
+		debugState.debug = true
+		config.voidShoeBoxPath = debugState.debugConfig.oneImagePath
+		latestImagePath = debugState.debugConfig.twoImagePath
+	}
+
 	result := diffImage(latestImagePath)
 	fmt.Printf("%#v", result)
 }
@@ -109,6 +136,19 @@ func diffImage(currentImagePath string) diffImageResult {
 	err = currentBox.ReadImage(currentImagePath)
 	if err != nil {
 		panic(err)
+	}
+
+	if debugState.debug {
+		fileA, err := os.Create("/tmp/" + strconv.FormatInt(time.Now().Unix(), 10) + "_void.jpg")
+		if err != nil {
+			panic(err)
+		}
+		fileB, err := os.Create("/tmp/" + strconv.FormatInt(time.Now().Unix(), 10) + "_fill.jpg")
+		if err != nil {
+			panic(err)
+		}
+		voidBox.WriteImageFile(fileA)
+		currentBox.WriteImageFile(fileB)
 	}
 
 	_, result := currentBox.CompareImages(voidBox, config.metricType)
