@@ -111,7 +111,7 @@ func convertToGrayscale(colorImage image.Image) (grayImage *image.Gray16) {
 	return grayImage
 }
 
-func diffImage(currentImagePath string) diffImageResult {
+func diffImage(currentImagePath string) DiffImageResult {
 	imagick.Initialize()
 	defer imagick.Terminate()
 
@@ -152,5 +152,5 @@ func diffImage(currentImagePath string) diffImageResult {
 	}
 
 	_, result := currentBox.CompareImages(voidBox, config.metricType)
-	return diffImageResult{difference: result}
+	return DiffImageResult{difference: result}
 }
