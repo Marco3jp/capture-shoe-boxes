@@ -50,6 +50,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	defer cam.Close()
 
 	setupCamera()
@@ -73,7 +74,6 @@ func connectDb() *sql.DB {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
 	return db
 }
 
