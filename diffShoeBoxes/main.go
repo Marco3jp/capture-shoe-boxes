@@ -117,23 +117,24 @@ func diffImage(currentImagePath string) DiffImageResult {
 
 	voidBox := imagick.NewMagickWand()
 	defer voidBox.Destroy()
-	err := voidBox.SetColorspace(imagick.COLORSPACE_GRAY)
-	if err != nil {
-		panic(err)
-	}
 
 	currentBox := imagick.NewMagickWand()
 	defer currentBox.Destroy()
-	err = currentBox.SetColorspace(imagick.COLORSPACE_GRAY)
-	if err != nil {
-		panic(err)
-	}
 
-	err = voidBox.ReadImage(config.voidShoeBoxPath)
+	err := voidBox.ReadImage(config.voidShoeBoxPath)
 	if err != nil {
 		panic(err)
 	}
 	err = currentBox.ReadImage(currentImagePath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = voidBox.SetImageColorspace(imagick.COLORSPACE_GRAY)
+	if err != nil {
+		panic(err)
+	}
+	err = currentBox.SetImageColorspace(imagick.COLORSPACE_GRAY)
 	if err != nil {
 		panic(err)
 	}
