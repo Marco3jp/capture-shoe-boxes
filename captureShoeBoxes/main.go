@@ -97,18 +97,56 @@ func insertDb(db *sql.DB, fileName string) (result sql.Result) {
 func setupCamera() {
 	controlMap := cam.GetControls()
 	for f, s := range controlMap {
-		if s.Name == "White Balance Temperature, Auto" {
+		fmt.Printf("%#v: %#v\n", f, s)
+		switch s.Name {
+		case "White Balance Temperature, Auto":
 			err := cam.SetControl(f, 0)
 			if err != nil {
 				fmt.Println("cannnot set White Balance Auto Control")
+			} else {
+				fmt.Println("success setting White Balance Auto")
 			}
-		}
-
-		if s.Name == "White Balance Temperature" {
-			err := cam.SetControl(f, 3400)
+			break
+		case "White Balance Temperature":
+			err := cam.SetControl(f, 3300)
 			if err != nil {
 				fmt.Println("cannnot set White Balance Temperature Control")
+			} else {
+				fmt.Println("success setting White Balance Temperature")
 			}
+			break
+		case "Brightness":
+			err := cam.SetControl(f, 64)
+			if err != nil {
+				fmt.Println("cannnot set Brightness Control")
+			} else {
+				fmt.Println("success setting Brightness")
+			}
+			break
+		case "Sharpness":
+			err := cam.SetControl(f, 7)
+			if err != nil {
+				fmt.Println("cannnot set Sharpness Control")
+			} else {
+				fmt.Println("success setting Sharpness")
+			}
+			break
+		case "Exposure, Auto":
+			err := cam.SetControl(f, 0)
+			if err != nil {
+				fmt.Println("cannnot set Exposure Auto Control")
+			} else {
+				fmt.Println("success setting Exposure Auto")
+			}
+			break
+		case "Exposure (Absolute)":
+			err := cam.SetControl(f, 300)
+			if err != nil {
+				fmt.Println("cannnot set Exposure (Absolute) Control")
+			} else {
+				fmt.Println("success setting Exposure (Absolute)")
+			}
+			break
 		}
 	}
 
