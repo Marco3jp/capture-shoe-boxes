@@ -97,7 +97,6 @@ func insertDb(db *sql.DB, fileName string) (result sql.Result) {
 func setupCamera() {
 	controlMap := cam.GetControls()
 	for f, s := range controlMap {
-		fmt.Printf("%#v: %#v\n", f, s)
 		switch s.Name {
 		case "White Balance Temperature, Auto":
 			err := cam.SetControl(f, 0)
