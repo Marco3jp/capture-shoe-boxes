@@ -21,7 +21,7 @@ CREATE TABLE shoe_box
     capture_id      INT                NOT NULL,
     created_at      TIMESTAMP          NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at      TIMESTAMP          NULL,
+    deleted_at      TIMESTAMP,
     FOREIGN KEY (capture_id) REFERENCES capture (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
