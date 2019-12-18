@@ -131,28 +131,11 @@ func getImage(path string) image.Image {
 	return photoImage
 }
 
-func convertToGrayscale(colorImage image.Image) (grayImage *image.Gray16) {
-	bounds := colorImage.Bounds()
-	grayImage = image.NewGray16(bounds)
-	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			c := color.Gray16Model.Convert(colorImage.At(x, y))
-			gray, _ := c.(color.Gray16)
-			grayImage.Set(x, y, gray)
-		}
-	}
-	return grayImage
-}
+// imagickの初期化を行い、MagickWandを生成、画像を読み込んで返す
+func setupImagick(currentImagePath string) (voidBox *imagick.MagickWand, currentBox *imagick.MagickWand) {
+	voidBox = imagick.NewMagickWand()
 
-func diffImage(currentImagePath string) DiffImageResult {
-	imagick.Initialize()
-	defer imagick.Terminate()
-
-	voidBox := imagick.NewMagickWand()
-	defer voidBox.Destroy()
-
-	currentBox := imagick.NewMagickWand()
-	defer currentBox.Destroy()
+	currentBox = imagick.NewMagickWand()
 
 	err := voidBox.ReadImage(config.voidShoeBoxPath)
 	if err != nil {
@@ -163,14 +146,15 @@ func diffImage(currentImagePath string) DiffImageResult {
 		panic(err)
 	}
 
-	err = voidBox.SetImageColorspace(imagick.COLORSPACE_GRAY)
+	return voidBox, currentBox
+}
+
+func setColorspace(target *imagick.MagickWand, colorspace imagick.ColorspaceType) {
+	err := target.SetImageColorspace(colorspace)
 	if err != nil {
 		panic(err)
 	}
-	err = currentBox.SetImageColorspace(imagick.COLORSPACE_GRAY)
-	if err != nil {
-		panic(err)
-	}
+}
 
 	if debugState.debug {
 		fileA, err := os.Create("/tmp/" + strconv.FormatInt(time.Now().Unix(), 10) + "_void.jpg")
