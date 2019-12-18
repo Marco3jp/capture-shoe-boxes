@@ -14,18 +14,27 @@ import (
 
 type Config struct {
 	voidShoeBoxPath string
-	threshold       uint // uint16とか？
+	threshold       float64 // 存在とするしきい値
 	metricType      imagick.MetricType
+	limit           float64 // 計測不能とするしきい値
+	imageRoot       string
 }
 
 var config = Config{
-	voidShoeBoxPath: "./test/void.jpg",
-	threshold:       100,
-	metricType:      imagick.METRIC_FUZZ_ERROR,
+	voidShoeBoxPath: "",
+	threshold:       2300,
+	metricType:      imagick.METRIC_MEAN_ABSOLUTE_ERROR,
+	limit:           8500,
+	imageRoot:       "./test/",
 }
 
 type DiffImageResult struct {
-	difference float64
+	comparedScore float64
+	isExist       bool
+	livingTimes   uint8
+	row           uint8
+	column        uint8
+	captureId     uint
 }
 
 // for debug //
@@ -35,15 +44,15 @@ type DebugState struct {
 }
 
 type DebugStruct struct {
-	oneImagePath string
-	twoImagePath string
+	voidImageFileName string
+	targetImageId     uint
 }
 
 var debugState = DebugState{
 	debug: false,
 	debugConfig: DebugStruct{
-		oneImagePath: "/tmp/1573657900.jpg",
-		twoImagePath: "/tmp/1573657906.jpg",
+		voidImageFileName: "cropped_1574072094.jpg",
+		targetImageId:     1,
 	},
 }
 
