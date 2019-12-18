@@ -110,12 +110,17 @@ func getLatestLivingTimes(db *sql.DB, tableRow uint8, column uint8) (livingTimes
 	return livingTimes
 }
 
-	err := row.Scan(&latestImagePath)
+// 比較の結果をDBに挿入
+func insertDiffResult(db *sql.DB, result DiffImageResult) {
+	ins, err := db.Prepare("INSERT INTO shoe_box(is_exist, living_times, row, `column`, compared_score, compared_metric, exist_threshold,capture_id) VALUES(?,?,?,?,?,?,?,?)")
 	if err != nil {
 		panic(err)
 	}
 
-	return latestImagePath
+	_, err = ins.Exec(result.isExist, result.livingTimes, result.row, result.column, result.comparedScore, config.metricType, config.threshold, result.captureId)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getImage(path string) image.Image {
