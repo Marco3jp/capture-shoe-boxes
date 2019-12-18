@@ -81,8 +81,23 @@ func connectDb() (*sql.DB, error) {
 	return db, err
 }
 
-func getLatestImagePath(db *sql.DB) string {
-	var latestImagePath string
+// 直前の撮影データのパスを受け取る
+func getLatestImageName(db *sql.DB) (captureId uint, latestImageName string) {
+	var row *sql.Row
+	if debugState.debug {
+		row = db.QueryRow("select id, file_name from capture where id=?", debugState.debugConfig.targetImageId)
+	} else {
+		row = db.QueryRow("select id, file_name from capture order by id desc limit 1 ")
+	}
+
+	err := row.Scan(&captureId, &latestImageName)
+	if err != nil {
+		panic(err)
+	}
+
+	return captureId, latestImageName
+}
+
 
 	row := db.QueryRow("select fileName from capture order by id desc limit 1 ")
 
