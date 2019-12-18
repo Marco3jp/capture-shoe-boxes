@@ -173,3 +173,7 @@ func diffImage(voidBox *imagick.MagickWand, currentBox *imagick.MagickWand) floa
 	_, compareScore := currentBox.CompareImages(voidBox, config.metricType)
 	return compareScore
 }
+
+func isExist(comparedScore float64) bool {
+	return comparedScore > config.threshold
+}
