@@ -57,19 +57,55 @@ var debugState = DebugState{
 }
 
 func main() {
-	// db, err := connectDb()
-	// latestImagePath := getLatestImagePath(db)
-	latestImagePath := "./test/exist_1.jpg"
+	db, err := connectDb()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	// TODO: ROWとCOLUMNの対応
+	var diffImageResult = DiffImageResult{
+		comparedScore: 0,
+		isExist:       false,
+		livingTimes:   0,
+		row:           0,
+		column:        0,
+		captureId:     0,
+	}
 
 	if len(os.Args) >= 2 && os.Args[1] == "debug" {
 		fmt.Println("Debug mode")
 		debugState.debug = true
-		config.voidShoeBoxPath = debugState.debugConfig.oneImagePath
-		latestImagePath = debugState.debugConfig.twoImagePath
+		config.voidShoeBoxPath = config.imageRoot + debugState.debugConfig.voidImageFileName
 	}
 
-	result := diffImage(latestImagePath)
-	fmt.Printf("%#v", result)
+	// TODO: 何故か := による定義だとエラーを吐く
+	var latestImageName string
+	diffImageResult.captureId, latestImageName = getLatestImageName(db)
+
+	latestImagePath := config.imageRoot + latestImageName
+
+	imagick.Initialize()
+	defer imagick.Terminate()
+	voidBox, currentBox := setupImagick(latestImagePath)
+	defer voidBox.Destroy()
+	defer currentBox.Destroy()
+
+	// グレースケール化
+	setColorspace(voidBox, imagick.COLORSPACE_GRAY)
+	setColorspace(currentBox, imagick.COLORSPACE_GRAY)
+
+	// 比較処理
+	diffImageResult.comparedScore = diffImage(voidBox, currentBox)
+	diffImageResult.isExist = isExist(diffImageResult.comparedScore)
+
+	// 何回生きてたかのチェック。初期値0なので非存在の場合はそのまま。
+	if diffImageResult.isExist {
+		diffImageResult.livingTimes = getLatestLivingTimes(db, diffImageResult.row, diffImageResult.column) + 1
+	}
+
+	// DBにDiff結果を挿入
+	insertDiffResult(db, diffImageResult)
 }
 
 func connectDb() (*sql.DB, error) {
