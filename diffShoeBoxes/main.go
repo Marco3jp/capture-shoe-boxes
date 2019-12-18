@@ -98,8 +98,17 @@ func getLatestImageName(db *sql.DB) (captureId uint, latestImageName string) {
 	return captureId, latestImageName
 }
 
+// 直前のデータでその靴箱が何連続生存だったか受け取る
+func getLatestLivingTimes(db *sql.DB, tableRow uint8, column uint8) (livingTimes uint8) {
+	row := db.QueryRow("select living_times from shoe_box where row=? and `column`=? order by id desc limit 1", tableRow, column)
 
-	row := db.QueryRow("select fileName from capture order by id desc limit 1 ")
+	err := row.Scan(&livingTimes)
+	if err != nil {
+		panic(err)
+	}
+
+	return livingTimes
+}
 
 	err := row.Scan(&latestImagePath)
 	if err != nil {
