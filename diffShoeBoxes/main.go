@@ -72,13 +72,13 @@ func main() {
 	fmt.Printf("%#v", result)
 }
 
-func connectDb() *sql.DB {
-	db, err := sql.Open("mysql", "test:passwd@/example")
+func connectDb() (*sql.DB, error) {
+	dataSourceName := "diff_shoe_boxes:" + os.Getenv("DIFF_SHOE_BOX_SQL_PASSWORD") + "@/is_exist_researcher"
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
-	return db
+	return db, err
 }
 
 func getLatestImagePath(db *sql.DB) string {
