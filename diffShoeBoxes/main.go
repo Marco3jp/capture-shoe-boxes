@@ -156,6 +156,7 @@ func setColorspace(target *imagick.MagickWand, colorspace imagick.ColorspaceType
 	}
 }
 
+func diffImage(voidBox *imagick.MagickWand, currentBox *imagick.MagickWand) float64 {
 	if debugState.debug {
 		fileA, err := os.Create("/tmp/" + strconv.FormatInt(time.Now().Unix(), 10) + "_void.jpg")
 		if err != nil {
@@ -169,6 +170,6 @@ func setColorspace(target *imagick.MagickWand, colorspace imagick.ColorspaceType
 		currentBox.WriteImageFile(fileB)
 	}
 
-	_, result := currentBox.CompareImages(voidBox, config.metricType)
-	return DiffImageResult{difference: result}
+	_, compareScore := currentBox.CompareImages(voidBox, config.metricType)
+	return compareScore
 }
