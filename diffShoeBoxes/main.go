@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/gographics/imagick.v3/imagick"
 	"image"
-	"image/color"
 	"image/jpeg"
 	"os"
 	"strconv"
