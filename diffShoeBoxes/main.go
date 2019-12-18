@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+/*
+靴箱は4*6、思ったよりもカメラの画角が広いので、そのために切り出す必要があるかなぁという感じ。
+*/
+
 type Config struct {
 	voidShoeBoxPath string
 	threshold       float64 // 存在とするしきい値
